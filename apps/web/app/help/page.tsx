@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
     BookOpen, Moon, Radio, Sparkles, Clock, Compass,
     HandHeart, BookText, Bookmark, Settings, HelpCircle,
-    ChevronDown, Search
+    ChevronDown, Search, Wand2
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -138,6 +138,23 @@ export default function Help() {
                 {
                     subtitle: "Morning/Evening Adhkar",
                     text: "Follow the Sunnah protection adhkar. The app tracks your streak for consistency."
+                }
+            ]
+        },
+        {
+            id: "DuaBuilder",
+            title: "Dua Builder",
+            icon: Wand2,
+            color: "text-fuchsia-500",
+            bg: "bg-fuchsia-500/10",
+            content: [
+                {
+                    subtitle: "Personalized Duas",
+                    text: "Describe your situation or feelings, and the AI will craft a beautiful, personalized dua incorporating authentic Islamic references."
+                },
+                {
+                    subtitle: "Authentic Support",
+                    text: "Every generated dua provides comfort based on Islamic teachings and includes relevant authentic supplications from the Quran or Sunnah."
                 }
             ]
         },
