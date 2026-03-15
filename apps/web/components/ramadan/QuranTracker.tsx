@@ -89,7 +89,7 @@ export function QuranTracker() {
                 Continue Reading <ChevronRight className="w-4 h-4 ml-2" />
             </Link>
             <p className="text-center text-xs text-slate-400 mt-3 italic">
-                "The Quran will always wait for you."
+                &quot;The Quran will always wait for you.&quot;
             </p>
         </div>
     );

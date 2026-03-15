@@ -25,20 +25,22 @@ export function HadithLanguageSwitcher() {
     };
 
     return (
-        <div className="flex items-center gap-2 bg-white dark:bg-zinc-800/50 p-1 rounded-lg border border-slate-200 dark:border-white/10">
+        <div className="flex items-center gap-1.5 bg-white dark:bg-zinc-800/50 p-1 rounded-xl border border-slate-200 dark:border-white/10">
             {languages.map((lang) => (
                 <button
                     key={lang.code}
                     onClick={() => handleLanguageChange(lang.code)}
                     className={`
-                        px-3 py-1.5 rounded-md text-sm font-medium transition-all
+                        flex flex-col items-center px-3 py-1.5 rounded-lg text-xs font-semibold transition-all leading-tight
                         ${currentLang === lang.code
                             ? "bg-emerald-600 text-white shadow-sm"
                             : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5"}
                     `}
                 >
-                    <span className="hidden sm:inline">{lang.name}</span>
-                    <span className="sm:hidden">{lang.code.toUpperCase()}</span>
+                    <span className="text-[11px] font-bold tracking-widest uppercase">{lang.code}</span>
+                    <span className={`text-[10px] mt-0.5 opacity-80 ${lang.code === "ar" || lang.code === "ur" ? "font-arabic" : ""}`}>
+                        {lang.native}
+                    </span>
                 </button>
             ))}
         </div>

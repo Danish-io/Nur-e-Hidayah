@@ -50,7 +50,7 @@ export default function BookmarksPage() {
                     </div>
                 ) : (
                     <div className="text-center py-20 bg-white dark:bg-zinc-900 rounded-2xl border border-dashed border-gray-300">
-                        <p className="text-gray-500 mb-4">You haven't bookmarked any verses yet.</p>
+                        <p className="text-gray-500 mb-4">You haven&apos;t bookmarked any verses yet.</p>
                         <Link href="/quran">
                             <Button variant="premium">Start Reading</Button>
                         </Link>

@@ -5,7 +5,7 @@ import { useTheme } from "next-themes";
 import { motion, useScroll, useMotionValueEvent, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, Moon, Sun, ChevronLeft } from "lucide-react";
+import { Menu, X, Moon, Sun, ChevronLeft } from "lucide-react";
 import { SidebarContent } from "@/components/layout/sidebar-content";
 
 export function Navbar() {
@@ -31,12 +31,12 @@ export function Navbar() {
         <>
             <motion.nav
                 className={cn(
-                    "sticky top-0 z-50 w-full transition-all duration-300 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-200/50 dark:border-white/5",
-                    isScrolled ? "shadow-sm py-3" : "py-4"
+                    "sticky top-0 z-50 w-full transition-all duration-500 glass border-b border-white/5",
+                    isScrolled ? "py-2 shadow-2xl" : "py-4"
                 )}
                 initial={{ y: -100 }}
                 animate={{ y: 0 }}
-                transition={{ duration: 0.5 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
             >
                 <div className="container mx-auto px-4 grid grid-cols-3 items-center">
 
@@ -46,33 +46,26 @@ export function Navbar() {
                             variant="ghost"
                             size="icon"
                             onClick={() => setIsMobileMenuOpen(true)}
-                            className="lg:hidden text-slate-800 dark:text-gray-200 hover:bg-emerald-50 dark:hover:bg-zinc-800"
+                            className="lg:hidden text-slate-800 dark:text-emerald-100 hover:bg-emerald-500/10"
                         >
                             <Menu className="w-6 h-6" />
                         </Button>
                     </div>
 
-                    {/* Center: Usage Logo */}
-                    <div className="flex flex-col items-center justify-center">
-                        <Link href="/" className="text-2xl md:text-3xl font-serif font-bold text-emerald-700 dark:text-emerald-500 tracking-wide">
-                            Nur-e-Hidayah
+                    {/* Center: Usage Logo (Glowing & Ornamented) */}
+                    <div className="flex flex-col items-center justify-center relative group">
+                        <Link href="/" className="relative z-10">
+                            <h1 className="text-2xl md:text-4xl font-serif font-medium text-emerald-800 dark:text-emerald-400 tracking-[0.05em] whitespace-nowrap drop-shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all duration-500 group-hover:drop-shadow-[0_0_20px_rgba(245,158,11,0.2)]">
+                                Nur-e-Hidayah
+                            </h1>
                         </Link>
-                        <span className="text-[10px] md:text-xs text-slate-400 dark:text-slate-500 tracking-widest uppercase font-medium mt-0.5">
-                            A gentle guide back to Allah
-                        </span>
+                        {/* Ornament: Thin gold line */}
+                        <div className="w-24 h-[1px] bg-gradient-to-r from-transparent via-accent/60 to-transparent mt-1 group-hover:w-32 transition-all duration-700" />
+                        <div className="absolute -inset-x-8 -inset-y-4 bg-emerald-500/5 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-1000 -z-10" />
                     </div>
 
                     {/* Right: Actions (User & Theme) */}
                     <div className="flex justify-end items-center space-x-2">
-                        <Link href="/profile">
-                            <Button
-                                variant="ghost"
-                                size="icon"
-                                className="text-slate-800 dark:text-gray-200 hover:text-emerald-700 hover:bg-emerald-50 dark:hover:bg-zinc-800"
-                            >
-                                <User className="w-6 h-6" />
-                            </Button>
-                        </Link>
 
                         <Button
                             variant="ghost"

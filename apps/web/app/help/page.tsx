@@ -276,7 +276,7 @@ export default function Help() {
                         ))
                     ) : (
                         <div className="text-center py-20 text-slate-500">
-                            No guides found matching "{searchQuery}".
+                            No guides found matching &quot;{searchQuery}&quot;.
                         </div>
                     )}
                 </div>

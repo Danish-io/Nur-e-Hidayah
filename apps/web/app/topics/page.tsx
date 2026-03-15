@@ -11,7 +11,7 @@ export default function TopicsPage() {
                 <div className="mb-10 text-center max-w-2xl mx-auto">
                     <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">Explore by Topic</h1>
                     <p className="text-slate-500 dark:text-slate-400">
-                        Discover the Quran's guidance on specific themes and subjects efficiently.
+                        Discover the Quran&apos;s guidance on specific themes and subjects efficiently.
                     </p>
                 </div>
 

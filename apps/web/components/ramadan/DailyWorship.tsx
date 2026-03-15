@@ -88,7 +88,7 @@ export function DailyWorship() {
                         ))}
                     </div>
                     <p className="text-center text-xs text-slate-400 mt-3 italic">
-                        "Every prayer counts. Tomorrow is another gift."
+                        &quot;Every prayer counts. Tomorrow is another gift.&quot;
                     </p>
                 </div>
             </div>

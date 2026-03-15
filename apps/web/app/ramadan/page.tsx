@@ -5,6 +5,7 @@ import { PrayerTimesCard } from "@/components/ramadan/PrayerTimesCard";
 import { DailyWorship } from "@/components/ramadan/DailyWorship";
 import { NightWorship } from "@/components/ramadan/NightWorship";
 import { EmotionalDuas } from "@/components/ramadan/EmotionalDuas";
+import { ShabEQadr } from "@/components/ramadan/ShabEQadr";
 import { QuranTracker } from "@/components/ramadan/QuranTracker";
 import { useRamadanTimes } from "@/hooks/useRamadanTimes";
 import { BookOpen, ChevronRight } from "lucide-react";
@@ -43,6 +44,9 @@ export default function RamadanPage() {
 
                         {/* Feature 5: Emotional Duas */}
                         <EmotionalDuas />
+
+                        {/* Feature 6: Shab-E-Qadr Guide */}
+                        <ShabEQadr />
                     </div>
                 </div>
             </div>

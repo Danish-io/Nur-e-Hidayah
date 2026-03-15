@@ -1,6 +1,6 @@
-import fs from "fs";
-import path from "path";
+import { getCachedHadithData } from "./hadith-cache";
 import { hadithCollections } from "./hadith-data";
+import { HADITH_ARABIC_SECTIONS } from "./hadith-arabic-sections";
 
 export interface FullHadith {
     hadithnumber: number | string;
@@ -9,68 +9,35 @@ export interface FullHadith {
     reference: { book: number; hadith: number };
 }
 
-export async function getHadiths(slug: string, page = 1, limit = 20, lang = "en") {
-    // Determine filename based on language
-    // en -> bukhari.json
-    // ur -> bukhari-ur.json
-    // ar -> bukhari-ar.json
-    // For other books, if we don't have ur/ar downloaded, we might want fallback? 
-    // Currently assuming I only downloaded bukhari-ur/ar.
-    // If future books are added, we need them too.
+export interface HadithChapter {
+    id: string;
+    title: string;
+    arabicTitle?: string;
+    hadithRanges?: {
+        first: number;
+        last: number;
+    };
+}
 
-    let filename = `${slug}.json`;
-    if (lang === "ur") filename = `${slug}-ur.json`;
-    if (lang === "ar") filename = `${slug}-ar.json`;
-
-    // Flexible path checking
-    const possiblePaths = [
-        path.join(process.cwd(), "apps/web/lib/data", filename),
-        path.join(process.cwd(), "lib/data", filename),
-        path.join(process.cwd(), "../web/lib/data", filename),
-    ];
-
-
-
-    let fileData: { hadiths: FullHadith[] } | null = null;
-    let fallbackData: { hadiths: FullHadith[] } | null = null;
-
-    // Load target language file
-    for (const p of possiblePaths) {
-        if (fs.existsSync(p)) {
-            try {
-                const raw = fs.readFileSync(p, "utf-8");
-                fileData = JSON.parse(raw);
-                break;
-            } catch (e) {
-                console.error("Failed to read hadith json", e);
-            }
-        }
-    }
+export async function getHadiths(slug: string, page = 1, limit = 20, lang = "en", chapterId?: string) {
+    const fileData = getCachedHadithData(slug, lang);
+    let fallbackData = null;
 
     // Load fallback English file if we are in non-En mode
     if (lang !== "en" && fileData) {
-        const enFilename = `${slug}.json`;
-        const enPaths = [
-            path.join(process.cwd(), "apps/web/lib/data", enFilename),
-            path.join(process.cwd(), "lib/data", enFilename),
-            path.join(process.cwd(), "../web/lib/data", enFilename),
-        ];
-
-        for (const p of enPaths) {
-            if (fs.existsSync(p)) {
-                try {
-                    const raw = fs.readFileSync(p, "utf-8");
-                    fallbackData = JSON.parse(raw);
-                    break;
-                } catch { /* ignore */ }
-            }
-        }
+        fallbackData = getCachedHadithData(slug, "en");
     }
 
     if (fileData && fileData.hadiths) {
+        let allHadiths = fileData.hadiths;
+
+        if (chapterId) {
+            allHadiths = allHadiths.filter((h: any) => String(h.reference?.book) === String(chapterId));
+        }
+
+        const total = allHadiths.length;
         const start = (page - 1) * limit;
         const end = start + limit;
-        const total = fileData.hadiths.length;
 
         // Create a map for fast fallback lookup if needed
         const fallbackMap = new Map<string | number, string>();
@@ -80,10 +47,10 @@ export async function getHadiths(slug: string, page = 1, limit = 20, lang = "en"
             // For safety, map all or just find on demand. 
             // Mapping all might be slow for 7000 items every request? 
             // Actually 7000 items is cheap for V8.
-            fallbackData.hadiths.forEach(h => fallbackMap.set(h.hadithnumber, h.text));
+            fallbackData.hadiths.forEach((h: FullHadith) => fallbackMap.set(h.hadithnumber, h.text));
         }
 
-        const items = fileData.hadiths.slice(start, end).map(h => {
+        const items = allHadiths.slice(start, end).map((h: FullHadith) => {
             let text = h.text;
             if (!text || text.trim() === "") {
                 // Try fallback
@@ -116,4 +83,36 @@ export async function getHadiths(slug: string, page = 1, limit = 20, lang = "en"
         page: 1,
         totalPages: 1
     };
+}
+
+export async function getHadithChapters(slug: string): Promise<HadithChapter[]> {
+    const fileData: any = getCachedHadithData(slug, "en");
+    const arabicSections = HADITH_ARABIC_SECTIONS[slug] || {};
+
+    if (fileData && fileData.metadata && fileData.metadata.sections) {
+        const sections = fileData.metadata.sections;
+        const details = fileData.metadata.section_details || {};
+
+        const chapters: HadithChapter[] = [];
+        
+        for (const [key, title] of Object.entries<string>(sections)) {
+            if (!title && key === "0") continue; // Skip empty chapter 0
+            
+            const chapterDetails = details[key] || {};
+            
+            chapters.push({
+                id: key,
+                title: title || `Chapter ${key}`,
+                arabicTitle: arabicSections[key] || undefined,
+                hadithRanges: chapterDetails.hadithnumber_first ? {
+                    first: chapterDetails.hadithnumber_first,
+                    last: chapterDetails.hadithnumber_last
+                } : undefined
+            });
+        }
+        
+        return chapters;
+    }
+
+    return [];
 }

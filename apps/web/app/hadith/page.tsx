@@ -1,5 +1,6 @@
 import { Book, Info } from "lucide-react";
 import Link from "next/link";
+import { HadithSearch } from "@/components/hadith/hadith-search";
 
 const hadithBooks = [
     {
@@ -43,7 +44,7 @@ const hadithBooks = [
 export default function Hadith() {
     return (
         <div className="container mx-auto px-4 py-8">
-            <div className="text-center max-w-2xl mx-auto mb-12">
+            <div className="text-center max-w-2xl mx-auto mb-4">
                 <div className="flex items-center justify-center gap-3 mb-4">
                     <Book className="w-8 h-8 text-emerald-600" />
                     <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Al-Kutub Al-Sittah</h1>
@@ -52,6 +53,9 @@ export default function Hadith() {
                     The six major Hadith collections (Al-Sihah Al-Sittah) considered most authentic in Sunni Islam.
                 </p>
             </div>
+
+            {/* Search */}
+            <HadithSearch />
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {hadithBooks.map((book) => (
@@ -70,7 +74,7 @@ export default function Hadith() {
                             {book.description}
                         </p>
                         <div className="mt-auto pt-4 flex items-center text-sm font-medium text-slate-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                            <span>Read Collection</span>
+                            <span>Browse Chapters</span>
                             <Info className="w-4 h-4 ml-2" />
                         </div>
                     </Link>

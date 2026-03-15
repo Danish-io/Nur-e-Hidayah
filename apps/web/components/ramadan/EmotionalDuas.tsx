@@ -92,7 +92,7 @@ export function EmotionalDuas() {
                                 </div>
                                 <p className="text-2xl font-arabic text-right mb-4 leading-loose text-slate-800 dark:text-slate-100">{dua.arabic}</p>
                                 <p className="text-sm text-slate-500 italic mb-2">{dua.transliteration}</p>
-                                <p className="text-base font-medium text-slate-700 dark:text-slate-300">"{dua.translation}"</p>
+                                <p className="text-base font-medium text-slate-700 dark:text-slate-300">&quot;{dua.translation}&quot;</p>
                             </motion.div>
                         ))}
                     </AnimatePresence>

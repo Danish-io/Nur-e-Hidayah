@@ -72,7 +72,7 @@ export function NightWorship() {
 
                         <div>
                             <p className="text-sm italic text-indigo-200 mb-2 leading-relaxed opacity-80">
-                                "Whoever stands (in prayer) in Ramadan out of faith and in hope of reward, his previous sins will be forgiven."
+                                &quot;Whoever stands (in prayer) in Ramadan out of faith and in hope of reward, his previous sins will be forgiven.&quot;
                             </p>
                             <p className="text-xs text-indigo-400 text-right">- Bukhari</p>
                         </div>

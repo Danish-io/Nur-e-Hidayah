@@ -57,6 +57,7 @@ const config: Config = {
             fontFamily: {
                 sans: ['var(--font-inter)', 'sans-serif'],
                 arabic: ['var(--font-amiri)', 'serif'],
+                mushaf: ['var(--font-naskh)', 'var(--font-amiri)', 'serif'],
             },
             animation: {
                 'pulse-slow': 'pulse 8s cubic-bezier(0.4, 0, 0.6, 1) infinite',

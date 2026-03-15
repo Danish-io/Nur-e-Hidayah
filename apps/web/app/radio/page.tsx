@@ -8,19 +8,19 @@ import { cn } from "@/lib/utils";
 
 // Mock Data with Reliable CDN Streams (QuranicAudio.com)
 const featuredStations = [
-    { id: 1, name: "Mishary Alafasy", type: "Reciters", url: "https://download.quranicaudio.com/quran/mishaari_raashid_al_3afaasee/001.mp3", image: "https://api.dicebear.com/9.x/avataaars/svg?seed=Mishary" },
-    { id: 2, name: "Abdur-Rahman as-Sudais", type: "Reciters", url: "https://download.quranicaudio.com/quran/abdurrahmaan_as-sudays/001.mp3", image: "https://api.dicebear.com/9.x/avataaars/svg?seed=Sudais" },
-    { id: 3, name: "Sa'ud ash-Shuraym", type: "Reciters", url: "https://download.quranicaudio.com/quran/sa3ood_al-shuraym/001.mp3", image: "https://api.dicebear.com/9.x/avataaars/svg?seed=Shuraym" },
-    { id: 4, name: "Maher al-Muaiqly", type: "Reciters", url: "https://download.quranicaudio.com/quran/maher_almu3aiqly/001.mp3", image: "https://api.dicebear.com/9.x/avataaars/svg?seed=Maher" },
-    { id: 5, name: "Ahmad al-Ajmy", type: "Reciters", url: "https://download.quranicaudio.com/quran/ahmed_ibn_3lee_al-3ajamy/001.mp3", image: "https://api.dicebear.com/9.x/avataaars/svg?seed=Ajmy" },
-    { id: 6, name: "AbdulBaset AbdulSamad", type: "Reciters", url: "https://download.quranicaudio.com/quran/abdul_basit_murattal/001.mp3", image: "https://api.dicebear.com/9.x/avataaars/svg?seed=AbdulBaset" },
+    { id: 1, name: "Mishary Alafasy", type: "Reciters", url: "https://download.quranicaudio.com/qdc/mishari_al_afasy/murattal/1.mp3", initials: "MA" },
+    { id: 2, name: "Abdur-Rahman as-Sudais", type: "Reciters", url: "https://download.quranicaudio.com/qdc/abdurrahmaan_as_sudais/murattal/1.mp3", initials: "RS" },
+    { id: 3, name: "Sa'ud ash-Shuraym", type: "Reciters", url: "https://download.quranicaudio.com/qdc/sa3ood_ash_shuraym/murattal/1.mp3", initials: "SS" },
+    { id: 4, name: "Maher al-Muaiqly", type: "Reciters", url: "https://download.quranicaudio.com/qdc/maher_al_muaiqly/murattal/1.mp3", initials: "MM" },
+    { id: 5, name: "Ahmad al-Ajmy", type: "Reciters", url: "https://download.quranicaudio.com/qdc/ahmed_ajamy/murattal/1.mp3", initials: "AA" },
+    { id: 6, name: "AbdulBaset AbdulSamad", type: "Reciters", url: "https://download.quranicaudio.com/qdc/abdul_basit_murattal/murattal/1.mp3", initials: "AB" },
 ];
 
 const liveStreams = [
-    { id: 101, name: "Makkah Live", type: "Live", url: "https://qurango.net/radio/makkah", status: "online" },
-    { id: 102, name: "Madinah Live", type: "Live", url: "https://qurango.net/radio/madinah", status: "online" },
+    { id: 101, name: "Makkah Live", type: "Live", url: "http://live.mp3quran.net:8006/;", status: "online" },
+    { id: 102, name: "Madinah Live", type: "Live", url: "http://live.mp3quran.net:8010/;", status: "online" },
     { id: 103, name: "Alf Elf Radio", type: "Live", url: "https://live.mp3quran.net:9702/;", status: "offline" },
-    { id: 104, name: "Quran Radio - Mixed", type: "Live", url: "https://qurango.net/radio/mix", status: "online" },
+    { id: 104, name: "Quran Radio - Mixed", type: "Live", url: "http://live.mp3quran.net:8002/;", status: "online" },
 ];
 
 const allStations = [
@@ -55,6 +55,7 @@ export default function RadioPage() {
     // Initialize Audio Ref
     useEffect(() => {
         audioRef.current = new Audio();
+        audioRef.current.preload = "auto";
 
         // Handle Errors
         audioRef.current.onerror = () => {
@@ -91,7 +92,11 @@ export default function RadioPage() {
                 }
             } else {
                 // New Station
+                // Reset audio state
+                audioRef.current.pause();
                 audioRef.current.src = station.url;
+                audioRef.current.load();
+
                 await audioRef.current.play();
                 setCurrentStation(station);
                 setIsPlaying(true);
@@ -99,7 +104,7 @@ export default function RadioPage() {
         } catch (error) {
             console.error("Playback Failed:", error);
             setIsPlaying(false);
-            alert("Playback failed. Please try another station.");
+            alert(`Playback failed for ${station.name}. Please try another station.`);
         }
     };
 
@@ -200,34 +205,37 @@ export default function RadioPage() {
                 </section>
             </div>
 
-            {/* Now Playing Bar */}
+            {/* Now Playing Bar (Nur Redesign) */}
             {currentStation && (
-                <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-zinc-900 border-t border-gray-200 dark:border-zinc-800 shadow-lg p-3 z-40 transition-transform duration-500 ease-in-out">
-                    <div className="container mx-auto max-w-5xl flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg flex items-center justify-center animate-pulse-slow">
-                                <RadioIcon className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+                <div className="fixed bottom-0 left-0 right-0 glass border-t border-white/5 shadow-[0_-10px_40px_rgba(0,0,0,0.1)] p-4 z-40 transition-all duration-1000 ease-in-out">
+                    <div className="container mx-auto max-w-5xl flex items-center justify-between gap-4">
+                        <div className="flex items-center gap-5">
+                            <div className="w-14 h-14 bg-emerald-500/10 dark:bg-emerald-500/5 rounded-2xl flex items-center justify-center relative overflow-hidden group">
+                                <RadioIcon className="w-7 h-7 text-emerald-600 dark:text-emerald-400 relative z-10" />
+                                <div className="absolute inset-0 bg-emerald-400/10 animate-pulse-slow" />
                             </div>
-                            <div>
-                                <h4 className="font-bold text-sm md:text-base text-slate-800 dark:text-white line-clamp-1">{currentStation.name}</h4>
-                                <div className="flex items-center gap-2">
-                                    <span className="text-xs text-emerald-700 font-medium px-2 py-0.5 bg-emerald-50 dark:bg-emerald-900/20 rounded-full">Live Radio</span>
+                            <div className="min-w-0">
+                                <h4 className="font-serif font-bold text-lg md:text-xl text-slate-800 dark:text-emerald-50 line-clamp-1">{currentStation.name}</h4>
+                                <div className="flex items-center gap-2 mt-1">
+                                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,1)]" />
+                                    <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-emerald-600/70 dark:text-emerald-400/60">Luminous Stream</span>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-4">
-                            <button className="text-slate-400 hover:text-emerald-600 transition-colors hidden md:block">
-                                <SkipBack className="w-5 h-5" />
+                        <div className="flex items-center gap-6">
+                            <button className="text-slate-400 hover:text-emerald-400 transition-all duration-500 hidden md:block hover:scale-110">
+                                <SkipBack className="w-6 h-6" />
                             </button>
                             <button
                                 onClick={() => playStation(currentStation)}
-                                className="w-10 h-10 md:w-12 md:h-12 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full flex items-center justify-center shadow-md transition-transform hover:scale-105"
+                                className="w-12 h-12 md:w-14 md:h-14 bg-emerald-600 hover:bg-emerald-500 text-white rounded-full flex items-center justify-center shadow-xl shadow-emerald-500/20 transition-all duration-500 hover:scale-110 active:scale-95 group relative overflow-hidden"
                             >
-                                {isPlaying ? <Pause className="w-5 h-5 fill-current" /> : <Play className="w-5 h-5 fill-current ml-1" />}
+                                <div className="absolute inset-x-0 bottom-0 h-1/2 bg-white/10 group-hover:h-full transition-all duration-700" />
+                                {isPlaying ? <Pause className="w-6 h-6 fill-current relative z-10" /> : <Play className="w-6 h-6 fill-current ml-1 relative z-10" />}
                             </button>
-                            <button className="text-slate-400 hover:text-emerald-600 transition-colors hidden md:block">
-                                <SkipForward className="w-5 h-5" />
+                            <button className="text-slate-400 hover:text-emerald-400 transition-all duration-500 hidden md:block hover:scale-110">
+                                <SkipForward className="w-6 h-6" />
                             </button>
                         </div>
                     </div>
@@ -244,44 +252,55 @@ function StationCard({ station, currentStation, isPlaying, onPlay }: { station: 
     return (
         <div
             onClick={() => onPlay(station)}
-            className={`bg-white dark:bg-zinc-900 rounded-xl p-4 w-60 border shadow-sm hover:shadow-md transition-all group cursor-pointer
-                ${active ? 'border-emerald-500 ring-1 ring-emerald-500' : 'border-gray-100 dark:border-zinc-800'}
+            className={`group relative overflow-hidden rounded-[20px] p-7 w-64 h-52 cursor-pointer transition-all duration-700
+                ${active
+                    ? 'bg-emerald-600/20 text-white shadow-[0_0_40px_rgba(16,185,129,0.2)] scale-[1.02] border-emerald-500/50'
+                    : 'glass hover:border-emerald-500/30 hover:-translate-y-1.5 hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] hover:shadow-emerald-500/5'
+                }
             `}
         >
-            <div className={`bg-gray-50 dark:bg-zinc-800 rounded-lg h-32 flex items-center justify-center mb-4 relative overflow-hidden transition-colors
-                 ${active ? 'bg-emerald-50 dark:bg-emerald-900/10' : 'group-hover:bg-gray-100 dark:group-hover:bg-zinc-750'}
-            `}>
-                {station.image ? (
-                    <img
-                        src={station.image}
-                        alt={station.name}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                ) : (
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center shadow-sm transition-transform group-hover:scale-110
-                        ${active ? 'bg-emerald-600 text-white' : 'bg-white dark:bg-zinc-700 text-slate-700 dark:text-slate-200'}
-                    `}>
-                        {active ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-1" />}
-                    </div>
-                )}
+            {/* Background Decorative Element */}
+            <div className={`absolute -right-12 -top-12 w-40 h-40 rounded-full blur-[60px] transition-opacity duration-1000
+                ${active ? 'bg-emerald-400/20 opacity-100' : 'bg-emerald-500/5 opacity-0 group-hover:opacity-100'}
+            `} />
 
-                {/* Overlay Play Icon for Image Cards */}
-                {station.image && (
-                    <div className={`absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity ${active ? 'opacity-100 bg-black/40' : ''}`}>
-                        <div className={`w-12 h-12 rounded-full flex items-center justify-center shadow-sm backdrop-blur-sm
-                            ${active ? 'bg-emerald-600 text-white' : 'bg-white/90 text-slate-800'}
-                         `}>
-                            {active ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-1" />}
+            <div className="flex flex-col h-full justify-between items-start relative z-10">
+                <div className="flex items-start justify-between w-full">
+                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-2xl font-serif font-bold shadow-inner transition-all duration-700 group-hover:scale-110
+                        ${active
+                            ? 'bg-white text-emerald-700 shadow-[0_0_20px_rgba(255,255,255,0.4)]'
+                            : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                        }
+                    `}>
+                        {station.initials || <RadioIcon className="w-7 h-7" />}
+                    </div>
+
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center transition-all duration-500
+                        ${active
+                            ? 'bg-white text-emerald-600 shadow-lg'
+                            : 'bg-white/5 dark:bg-emerald-500/5 text-slate-400 group-hover:bg-emerald-500 group-hover:text-white group-hover:shadow-[0_0_15px_rgba(16,185,129,0.4)]'
+                        }
+                    `}>
+                        {active ? <Pause className="w-6 h-6 fill-current" /> : <Play className="w-6 h-6 fill-current ml-0.5" />}
+                    </div>
+                </div>
+
+                <div className="space-y-1.5">
+                    <h3 className={`font-serif font-bold text-xl leading-tight line-clamp-2 transition-colors duration-500
+                        ${active ? 'text-white' : 'text-slate-800 dark:text-emerald-50'}
+                    `}>
+                        {station.name}
+                    </h3>
+                    <div className="flex items-center gap-2">
+                        <div className={`h-[1px] w-4 bg-current opacity-30 ${active ? 'text-emerald-200' : 'text-slate-400'}`} />
+                        <div className={`text-[10px] font-bold uppercase tracking-[0.2em]
+                            ${active ? 'text-emerald-200' : 'text-slate-400'}
+                        `}>
+                            {station.type}
                         </div>
                     </div>
-                )}
+                </div>
             </div>
-            <h3 className={`font-semibold truncate mb-2 ${active ? 'text-emerald-800 dark:text-emerald-400' : 'text-slate-800 dark:text-gray-200'}`}>
-                {station.name}
-            </h3>
-            <span className="inline-block px-2 py-0.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 text-xs rounded-md font-medium">
-                {station.type}
-            </span>
         </div>
     );
 }
@@ -293,32 +312,50 @@ function LiveCard({ station, currentStation, isPlaying, onPlay }: { station: any
     return (
         <div
             onClick={() => onPlay(station)}
-            className={`bg-white dark:bg-zinc-900 rounded-xl p-4 border shadow-sm hover:shadow-md transition-all cursor-pointer relative overflow-hidden
-                ${active ? 'border-emerald-500 ring-1 ring-emerald-500' : 'border-gray-100 dark:border-zinc-800'}
+            className={`rounded-[20px] p-6 border shadow-sm transition-all duration-700 cursor-pointer relative overflow-hidden group
+                ${active
+                    ? 'bg-emerald-600/10 border-emerald-500/50 shadow-[0_0_30px_rgba(16,185,129,0.1)]'
+                    : 'glass hover:border-emerald-500/30 hover:-translate-y-1 hover:shadow-xl'
+                }
             `}
         >
-            <div className="absolute top-4 right-4 bg-red-500 text-white text-[10px] uppercase font-bold px-2 py-0.5 rounded-sm animate-pulse flex items-center gap-1">
-                <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
+            <div className={`absolute top-4 right-4 text-[10px] uppercase font-bold px-3 py-1 rounded-full flex items-center gap-2 shadow-sm transition-all duration-700
+                ${active ? 'bg-red-500 text-white animate-pulse' : 'bg-white/5 text-slate-400 dark:text-slate-500 group-hover:text-emerald-400'}
+            `}>
+                <div className={`w-1.5 h-1.5 rounded-full ${active ? 'bg-white' : 'bg-current'}`}></div>
                 Live
             </div>
 
-            <div className="flex items-center gap-4">
-                <div className={`w-16 h-16 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors
-                    ${active ? 'bg-emerald-50 dark:bg-emerald-900/10' : 'bg-gray-50 dark:bg-zinc-800'}
+            <div className="flex items-center gap-6">
+                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center flex-shrink-0 transition-all duration-700 shadow-inner
+                    ${active
+                        ? 'bg-emerald-500 text-white scale-110 shadow-[0_0_20px_rgba(16,185,129,0.4)]'
+                        : 'bg-emerald-500/5 text-emerald-600 hover:bg-emerald-500/10'}
                 `}>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center shadow-sm transition-transform group-hover:scale-110
-                        ${active ? 'bg-emerald-600 text-white' : 'bg-white dark:bg-zinc-700 text-slate-700 dark:text-slate-200'}
-                    `}>
-                        {active ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5" />}
-                    </div>
+                    {active ? <Pause className="w-8 h-8 fill-current" /> : <Play className="w-8 h-8 fill-current ml-1" />}
                 </div>
-                <div>
-                    <h3 className={`font-semibold line-clamp-2 mb-2 leading-tight ${active ? 'text-emerald-800 dark:text-emerald-400' : 'text-slate-800 dark:text-gray-200'}`}>
+                <div className="flex-1 min-w-0">
+                    <h3 className={`font-serif font-bold text-xl line-clamp-1 mb-1.5 leading-tight transition-colors duration-500 ${active ? 'text-emerald-50' : 'text-slate-800 dark:text-emerald-50/90'}`}>
                         {station.name}
                     </h3>
-                    <span className="inline-block px-2 py-0.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 text-xs rounded-md font-medium">
-                        {station.type}
-                    </span>
+                    <div className="flex items-center gap-3">
+                        <span className="inline-block px-2.5 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] rounded font-bold uppercase tracking-[0.15em]">
+                            {station.type}
+                        </span>
+                        <div className="flex gap-1 items-end h-3">
+                            {[1, 2, 3, 4].map((i) => (
+                                <div
+                                    key={i}
+                                    className={`w-1 rounded-full bg-emerald-500 transition-all duration-500 ${active ? 'animate-bounce' : 'opacity-20'}`}
+                                    style={{
+                                        height: `${40 + Math.random() * 60}%`,
+                                        animationDelay: `${i * 0.1}s`,
+                                        animationDuration: '0.6s'
+                                    }}
+                                />
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -332,30 +369,41 @@ function MiniStationCard({ station, currentStation, isPlaying, onPlay }: { stati
     return (
         <div
             onClick={() => onPlay(station)}
-            className={`bg-white dark:bg-zinc-900 rounded-xl p-4 border shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col h-full
-                 ${active ? 'border-emerald-500 ring-1 ring-emerald-500' : 'border-gray-100 dark:border-zinc-800'}
+            className={`group rounded-[20px] p-5 border transition-all duration-700 cursor-pointer flex flex-col h-full
+                 ${active
+                    ? 'bg-emerald-600/10 border-emerald-500/40 shadow-lg shadow-emerald-500/5'
+                    : 'glass hover:border-emerald-500/30 hover:-translate-y-1 hover:shadow-md'
+                }
             `}
         >
-            <div className="flex items-start justify-between mb-4">
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white shadow-sm
-                    ${station.initials ? 'bg-emerald-600' : 'bg-gray-400'}`}>
-                    {station.initials || <RadioIcon className="w-5 h-5" />}
-                </div>
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors
-                     ${active ? 'bg-emerald-600 text-white' : 'bg-gray-50 dark:bg-zinc-800 hover:bg-emerald-50 dark:hover:bg-zinc-700'}
+            <div className="flex items-center justify-between mb-5">
+                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-lg font-serif font-bold shadow-inner transition-all duration-700 group-hover:scale-110
+                    ${active ? 'bg-emerald-500 text-white shadow-[0_0_15px_rgba(16,185,129,0.3)]' : 'bg-emerald-500/10 text-emerald-600'}
                 `}>
-                    {active ? <Pause className="w-4 h-4" /> : <Play className={`w-4 h-4 ml-0.5 ${active ? 'text-white' : 'text-slate-400 hover:text-emerald-600'}`} />}
+                    {station.initials || <RadioIcon className="w-6 h-6" />}
+                </div>
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-500
+                     ${active ? 'bg-white text-emerald-600 shadow-md' : 'bg-white/5 text-slate-400 group-hover:text-emerald-500'}
+                `}>
+                    {active ? <Pause className="w-5 h-5 fill-current" /> : <Play className={`w-5 h-5 fill-current ml-0.5`} />}
                 </div>
             </div>
 
-            <h3 className={`font-semibold text-sm mb-auto ${active ? 'text-emerald-800' : 'text-slate-800 dark:text-gray-200'}`}>
+            <h3 className={`font-serif font-bold text-base mb-auto line-clamp-2 transition-colors duration-500 ${active ? 'text-emerald-50' : 'text-slate-800 dark:text-emerald-50/80'}`}>
                 {station.name}
             </h3>
 
-            <div className="mt-3">
-                <span className="inline-block px-2 py-0.5 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 text-[10px] rounded-md font-medium">
+            <div className="mt-5 flex items-center justify-between">
+                <span className="inline-block px-3 py-1 bg-white/5 text-slate-500 dark:text-emerald-100/40 text-[9px] rounded-lg font-bold uppercase tracking-[0.2em]">
                     {station.type}
                 </span>
+                {active && (
+                    <div className="flex gap-1 items-end h-3">
+                        {[1, 2, 3].map(i => (
+                            <div key={i} className="w-1 h-3 bg-emerald-500/50 rounded-full animate-pulse" style={{ animationDelay: `${i * 0.2}s` }} />
+                        ))}
+                    </div>
+                )}
             </div>
         </div>
     );

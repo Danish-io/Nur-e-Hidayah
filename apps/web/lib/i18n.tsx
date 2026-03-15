@@ -22,6 +22,7 @@ export type Translations = {
         settings: string;
         help: string;
         scholars: string;
+        quranPdf: string;
     };
     // Common
     common: {
@@ -52,6 +53,8 @@ export type Translations = {
         saved: string;
         customize: string;
         guide: string;
+        mushafMode: string;
+        mushafDesc: string;
     };
     // Settings page
     settings: {
@@ -154,6 +157,7 @@ const en: Translations = {
         settings: "Settings",
         help: "Help",
         scholars: "Scholars",
+        quranPdf: "Quran PDF",
     },
     common: {
         features: "Features",
@@ -182,6 +186,8 @@ const en: Translations = {
         saved: "Saved",
         customize: "Customize",
         guide: "Guide",
+        mushafMode: "Quran Mushaf (Readable) Mode",
+        mushafDesc: "Authentic Book Experience",
     },
     settings: {
         title: "Settings",
@@ -281,6 +287,7 @@ const ur: Translations = {
         settings: "ترتیبات",
         help: "مدد",
         scholars: "علماء",
+        quranPdf: "قرآن پی ڈی ایف",
     },
     common: {
         features: "خصوصیات",
@@ -309,6 +316,8 @@ const ur: Translations = {
         saved: "محفوظ",
         customize: "ترتیب دیں",
         guide: "رہنما",
+        mushafMode: "قرآن مصحف (پڑھنے کا انداز)",
+        mushafDesc: "اصلی کتابی تجربہ",
     },
     settings: {
         title: "ترتیبات",
@@ -408,6 +417,7 @@ const hi: Translations = {
         settings: "सेटिंग्स",
         help: "मदद",
         scholars: "इस्लामिक विद्वान",
+        quranPdf: "कुरान PDF",
     },
     common: {
         features: "विशेषताएं",
@@ -436,6 +446,8 @@ const hi: Translations = {
         saved: "सहेजा गया",
         customize: "कस्टमाइज़",
         guide: "गाइड",
+        mushafMode: "कुरान मुसहफ (पढ़ने का मोड)",
+        mushafDesc: "प्रामाणिक पुस्तक अनुभव",
     },
     settings: {
         title: "सेटिंग्स",
@@ -535,6 +547,7 @@ const ar: Translations = {
         settings: "الإعدادات",
         help: "المساعدة",
         scholars: "العلماء",
+        quranPdf: "القرآن PDF",
     },
     common: {
         features: "الميزات",
@@ -563,6 +576,8 @@ const ar: Translations = {
         saved: "المحفوظ",
         customize: "تخصيص",
         guide: "الدليل",
+        mushafMode: "المصحف الشريف (وضع القراءة)",
+        mushafDesc: "تجربة الكتاب الأصيلة",
     },
     settings: {
         title: "الإعدادات",

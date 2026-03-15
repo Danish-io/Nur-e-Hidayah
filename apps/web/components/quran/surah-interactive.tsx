@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PlayCircle, Bookmark, Share2, ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { AudioPlayer } from "@/components/quran/audio-player";
 import { useBookmarks } from "@/lib/bookmarks-context";
 
 interface SurahInteractiveProps {
@@ -17,7 +16,6 @@ interface SurahInteractiveProps {
 }
 
 export function SurahInteractive({ surah }: SurahInteractiveProps) {
-    const [showPlayer, setShowPlayer] = useState(false);
     const { addBookmark, isBookmarked, removeBookmark } = useBookmarks();
 
     // Create a pseudo-id for the Surah bookmark (bookmarking verse 1 by default for now)
@@ -38,41 +36,29 @@ export function SurahInteractive({ surah }: SurahInteractiveProps) {
     };
 
     return (
-        <>
-            <div className="sticky top-[72px] z-40 bg-white/95 dark:bg-zinc-900/95 backdrop-blur border-b border-gray-200 dark:border-zinc-800 shadow-sm transition-all">
-                <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-                    <div className="flex items-center space-x-4">
-                        <Link href="/quran">
-                            <Button variant="ghost" size="icon"><ArrowLeft className="w-5 h-5" /></Button>
-                        </Link>
-                        <div>
-                            <h1 className="font-bold text-slate-900 dark:text-white">{surah.transliteration}</h1>
-                            <p className="text-xs text-slate-500">{surah.translation} • {surah.type}</p>
-                        </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => setShowPlayer(!showPlayer)}
-                            className={showPlayer ? "text-quran-gold" : ""}
-                        >
-                            <PlayCircle className="w-5 h-5" />
-                        </Button>
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={toggleBookmark}
-                            className={bookmarked ? "text-quran-gold fill-current" : ""}
-                        >
-                            <Bookmark className="w-5 h-5" />
-                        </Button>
-                        <Button variant="ghost" size="icon"><Share2 className="w-5 h-5" /></Button>
+        <div className="sticky top-[72px] z-40 bg-white/95 dark:bg-zinc-900/95 backdrop-blur border-b border-gray-200 dark:border-zinc-800 shadow-sm transition-all">
+            <div className="container mx-auto px-4 h-16 flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                    <Link href="/quran">
+                        <Button variant="ghost" size="icon"><ArrowLeft className="w-5 h-5" /></Button>
+                    </Link>
+                    <div>
+                        <h1 className="font-bold text-slate-900 dark:text-white">{surah.transliteration}</h1>
+                        <p className="text-xs text-slate-500">{surah.translation} • {surah.type}</p>
                     </div>
                 </div>
+                <div className="flex items-center space-x-2">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={toggleBookmark}
+                        className={bookmarked ? "text-quran-gold fill-current" : ""}
+                    >
+                        <Bookmark className="w-5 h-5" />
+                    </Button>
+                    <Button variant="ghost" size="icon"><Share2 className="w-5 h-5" /></Button>
+                </div>
             </div>
-
-            {showPlayer && <AudioPlayer surahId={surah.id} surahName={surah.transliteration} />}
-        </>
+        </div>
     );
 }

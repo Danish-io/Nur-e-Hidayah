@@ -149,7 +149,7 @@ function DuaCard({ dua }: { dua: Dua }) {
                                 <div>
                                     <h4 className="text-emerald-600 dark:text-emerald-500 text-sm font-bold uppercase tracking-wide mb-1">Transliteration</h4>
                                     <p className="text-slate-600 dark:text-slate-400 italic leading-relaxed">
-                                        "{dua.transliteration}"
+                                        &quot;{dua.transliteration}&quot;
                                     </p>
                                 </div>
                                 <div>

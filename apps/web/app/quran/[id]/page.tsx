@@ -1,44 +1,109 @@
-
 import { quranData, Surah, Verse } from "@/data/quran";
 import { notFound } from "next/navigation";
-import { SurahInteractive } from "@/components/quran/surah-interactive";
-import { AIExplainButton } from "@/components/shared/ai-explain-button";
+import SurahPageClient from "./client-page";
+import { ReadingSettingsProvider } from "@/context/reading-settings-context";
 
 // Helper to fetch data if local is empty
 async function getSurahData(id: number): Promise<Surah | undefined> {
     const localSurah = quranData.find((s) => s.id === id);
-
     if (!localSurah) return undefined;
 
-    // Only return local data if it's complete
-    if (localSurah.verses.length === localSurah.totalVerses) return localSurah;
+    let wordsData: any = null;
+    let audioData: any = null;
+    let cloudData: any = null;
 
+    // Helper for fetch with timeout
+    const fetchWithTimeout = async (url: string, options: any = {}) => {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
+        try {
+            const res = await fetch(url, { ...options, signal: controller.signal });
+            clearTimeout(timeoutId);
+            return res;
+        } catch (e) {
+            clearTimeout(timeoutId);
+            throw e;
+        }
+    };
+
+    // 1. Try fetching Word Data from Quran.com
     try {
-        // Fetch Arabic (quran-uthmani), Urdu (ur.jalandhry), and English (en.sahih)
-        const res = await fetch(`http://api.alquran.cloud/v1/surah/${id}/editions/quran-uthmani,ur.jalandhry,en.sahih`);
-
-        if (!res.ok) throw new Error("Failed to fetch surah data");
-
-        const apiData = await res.json();
-        const arabicData = apiData.data[0];
-        const urduData = apiData.data[1];
-        const englishData = apiData.data[2];
-
-        const verses: Verse[] = arabicData.ayahs.map((ayah: any, index: number) => ({
-            id: ayah.numberInSurah,
-            text: ayah.text,
-            translation: urduData.ayahs[index].text,
-            englishTranslation: englishData.ayahs[index].text,
-        }));
-
-        return {
-            ...localSurah,
-            verses: verses,
-        };
-    } catch (error) {
-        console.warn(`Note: API unavailable for Surah ${id} (likely rate limit). Using local data.`);
-        return localSurah;
+        const wordsRes = await fetchWithTimeout(`https://api.quran.com/api/v4/verses/by_chapter/${id}?words=true&word_fields=text_uthmani,location&per_page=286`, { next: { revalidate: 3600 } });
+        if (wordsRes.ok) wordsData = await wordsRes.json();
+    } catch (e) {
+        console.warn(`Quran.com words fetch failed for Surah ${id}: ${e instanceof Error ? e.message : 'timeout'}`);
     }
+
+    // 2. Try fetching Audio Data from Quran.com
+    try {
+        const audioRes = await fetchWithTimeout(`https://api.quran.com/api/v4/audio/reciters/7/chapters/${id}?segments=true`, { next: { revalidate: 3600 } });
+        if (audioRes.ok) audioData = await audioRes.json();
+    } catch (e) {
+        console.warn(`Quran.com audio fetch failed for Surah ${id}: ${e instanceof Error ? e.message : 'timeout'}`);
+    }
+
+    // 3. Try fetching Translation Data from Alquran.cloud
+    try {
+        const cloudRes = await fetchWithTimeout(`https://api.alquran.cloud/v1/surah/${id}/editions/ur.jalandhry,en.sahih,quran-indopak,ur.khan,en.walk`, { next: { revalidate: 3600 } });
+        if (cloudRes.ok) cloudData = await cloudRes.json();
+    } catch (e) {
+        console.warn(`Alquran.cloud fetch failed for Surah ${id}: ${e instanceof Error ? e.message : 'timeout'}`);
+    }
+
+    // If we have at least words or cloud data, we can try to assemble the verses
+    if (wordsData || cloudData) {
+        try {
+            const audioFile = audioData?.audio_file;
+            const urduData = cloudData?.data[0];
+            const englishData = cloudData?.data[1];
+            const indopakData = cloudData?.data[2];
+            const urduAudioData = cloudData?.data[3];
+            const englishAudioData = cloudData?.data[4];
+
+            // Use either Quran.com verses or Alquran.cloud ayahs as the base
+            const baseVerses = wordsData?.verses || cloudData?.data[0]?.ayahs;
+
+            if (baseVerses) {
+                const verses: Verse[] = baseVerses.map((v: any, index: number) => {
+                    const verseNumber = v.verse_number || v.numberInSurah;
+                    const verseSegments = audioFile?.segments?.filter((s: any) => s[0] === verseNumber) || [];
+                    const startTime = verseSegments.length > 0 ? verseSegments[0][2] : 0;
+                    const endTime = verseSegments.length > 0 ? verseSegments[verseSegments.length - 1][3] : 0;
+
+                    return {
+                        id: verseNumber,
+                        text: v.text_uthmani || v.text,
+                        translation: urduData?.ayahs[index]?.text || "",
+                        englishTranslation: englishData?.ayahs[index]?.text || "",
+                        audio: audioFile ? `https://download.quranicaudio.com/qdc/mishary_rashid_alafasy/delayed/mp3/${audioFile.file_name}` : "",
+                        audioUrdu: urduAudioData?.ayahs[index]?.audio || "",
+                        audioEnglish: englishAudioData?.ayahs[index]?.audio || "",
+                        textIndopak: indopakData?.ayahs[index]?.text || "",
+                        startTime,
+                        endTime,
+                        words: v.words?.map((w: any) => ({
+                            id: w.id,
+                            text: w.text_uthmani,
+                            transliteration: w.transliteration?.text,
+                            translation: w.translation?.text,
+                        })) || [],
+                        segments: verseSegments.map((s: any) => [s[1], s[2], s[3]]),
+                    };
+                });
+
+                if (verses.length > 0) {
+                    return {
+                        ...localSurah,
+                        verses: verses,
+                    };
+                }
+            }
+        } catch (assemblyError) {
+            console.error(`Error assembling verses for Surah ${id}:`, assemblyError);
+        }
+    }
+
+    return localSurah;
 }
 
 export default async function SurahPage({ params }: { params: { id: string } }) {
@@ -49,89 +114,6 @@ export default async function SurahPage({ params }: { params: { id: string } }) 
         return notFound();
     }
 
-    return (
-        <div className="min-h-screen bg-quran-paper dark:bg-zinc-950 pb-32">
-
-
-            <SurahInteractive surah={surah} />
-
-            <div className="container mx-auto px-4 pt-8 max-w-4xl">
-                {/* Bismillah - Hide for Surah 1 (part of verses) and Surah 9 (no Bismillah) */}
-                {surahId !== 1 && surahId !== 9 && (
-                    <div className="text-center mb-12">
-                        <h2 className="font-arabic text-4xl leading-relaxed text-slate-800 dark:text-slate-100">
-                            بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ
-                        </h2>
-                        <p className="text-slate-500 mt-2 text-sm font-arabic tracking-wide" style={{ fontFamily: 'var(--font-amiri)' }}>شروع اللہ کے نام سے جو بڑا مہربان نہایت رحم والا ہے</p>
-                        <p className="text-slate-400 text-xs uppercase tracking-widest mt-1">In the Name of Allah, the Most Gracious, the Most Merciful</p>
-                    </div>
-                )}
-
-                <div className="space-y-8 animate-fade-in-up animation-delay-300">
-                    {surah.verses.length === 0 ? (
-                        <div className="text-center py-20 text-slate-500">
-                            <p>Unable to load verses at this time.</p>
-                        </div>
-                    ) : (
-                        surah.verses.map((verse, index) => (
-                            <div key={verse.id} className="group relative border-b border-gray-100 dark:border-zinc-800/50 py-10 last:border-0 hover:bg-white/60 dark:hover:bg-zinc-900/40 transition-all duration-500 -mx-6 px-6 rounded-2xl">
-                                <div className="flex flex-col space-y-8">
-                                    {/* ID Badge */}
-                                    <div className="absolute left-6 top-10 opacity-30 group-hover:opacity-100 transition-opacity">
-                                        <div className="w-10 h-10 rounded-full border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 flex items-center justify-center text-xs font-bold text-slate-400 group-hover:text-quran-gold group-hover:border-quran-gold transition-colors shadow-sm">
-                                            {verse.id}
-                                        </div>
-                                    </div>
-
-                                    {/* Arabic */}
-                                    <p className="font-arabic text-right text-4xl md:text-5xl leading-[2.5] text-slate-800 dark:text-slate-100 pl-16 drop-shadow-sm" style={{ fontFamily: 'var(--font-amiri)' }}>
-                                        {verse.text}
-                                    </p>
-
-                                    <div className="pl-16 space-y-6">
-                                        {/* Urdu Translation */}
-                                        <div className="relative">
-                                            <div className="absolute -left-4 top-1 w-1 h-full bg-quran-gold/20 group-hover:bg-quran-gold rounded-full transition-colors"></div>
-                                            <p className="text-xs text-quran-gold font-bold uppercase tracking-widest mb-2 opacity-80">
-                                                Urdu Translation
-                                            </p>
-                                            <p className="text-xl md:text-2xl text-slate-700 dark:text-slate-300 leading-relaxed font-arabic text-right group-hover:text-slate-900 dark:group-hover:text-white transition-colors" style={{ fontFamily: 'var(--font-amiri)' }} dir="rtl">
-                                                {verse.translation}
-                                            </p>
-                                        </div>
-
-                                        {/* English Translation */}
-                                        {verse.englishTranslation && (
-                                            <div className="pt-2">
-                                                <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mb-1">
-                                                    English Translation
-                                                </p>
-                                                <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed font-light group-hover:text-slate-800 dark:group-hover:text-slate-300 transition-colors">
-                                                    {verse.englishTranslation}
-                                                </p>
-                                            </div>
-                                        )}
-                                        {/* AI Explanation Button */}
-                                        <div className="pt-2">
-                                            <AIExplainButton
-                                                contextId={`surah:${surahId}:${verse.id}`}
-                                                text={verse.englishTranslation || verse.translation}
-                                                type="quran"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        ))
-                    )}
-                </div>
-            </div>
-        </div>
-    );
+    return <SurahPageClient surah={surah} />;
 }
 
-export function generateStaticParams() {
-    return quranData.map((s) => ({
-        id: s.id.toString(),
-    }));
-}
