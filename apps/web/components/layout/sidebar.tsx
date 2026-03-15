@@ -11,7 +11,7 @@ export function Sidebar({ className }: { className?: string }) {
     return (
         <div
             className={cn(
-                "flex flex-col h-screen bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-r border-slate-200 dark:border-white/5 transition-all duration-300 relative group",
+                "flex flex-col h-screen bg-[#1C1C1C] backdrop-blur-xl border-r border-white/5 transition-all duration-300 relative group",
                 isCollapsed ? "w-20" : "w-64",
                 className
             )}

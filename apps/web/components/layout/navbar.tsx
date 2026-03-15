@@ -102,7 +102,7 @@ export function Navbar() {
                             animate={{ x: 0 }}
                             exit={{ x: "-100%" }}
                             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-                            className="fixed inset-y-0 left-0 z-[70] w-72 bg-white/90 dark:bg-slate-950/90 backdrop-blur-xl border-r border-slate-200 dark:border-white/5 shadow-2xl flex flex-col lg:hidden"
+                            className="fixed inset-y-0 left-0 z-[70] w-72 bg-[#1C1C1C] border-r border-white/5 shadow-2xl flex flex-col lg:hidden"
                         >
                             <div className="flex-1 overflow-hidden overflow-y-auto">
                                 <SidebarContent
