@@ -159,44 +159,63 @@ export default function RamadanPage() {
                 <div className="space-y-4">
                     <div className="flex items-center gap-3">
                         <Moon className="w-5 h-5 text-emerald-500" />
-                        <h2 className="text-lg font-bold text-white">Suhoor & Iftar Timer</h2>
-                    </div>
-                    <p className="text-sm text-slate-400 text-sm pl-8 -mt-2">{locationName}</p>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div className="bg-[#1C1C1C] rounded-xl p-6 border border-white/5 flex flex-col items-center justify-center gap-2">
-                            <span className="text-xs text-slate-500 font-bold tracking-widest uppercase">Stop Eating</span>
-                            <span className="text-3xl font-bold text-emerald-400">{times ? times.Imsak || times.Fajr : "05:28"}</span>
-                            <span className="text-xs text-slate-600">Imsak</span>
-                        </div>
-                        <div className="bg-[#1C1C1C] rounded-xl p-6 border border-white/5 flex flex-col items-center justify-center gap-2">
-                            <span className="text-xs text-slate-500 font-bold tracking-widest uppercase">Suhoor Ends</span>
-                            <span className="text-3xl font-bold text-white">{times?.Fajr || "05:38"}</span>
-                            <span className="text-xs text-slate-600">Fajr Adhan</span>
-                        </div>
-                        <div className="bg-[#1C1C1C] rounded-xl p-6 border border-amber-500/20 shadow-[0_0_15px_rgba(245,158,11,0.05)] flex flex-col items-center justify-center gap-2 relative overflow-hidden">
-                            <div className="absolute inset-0 bg-amber-500/5 pointer-events-none" />
-                            <span className="text-xs text-amber-500/80 font-bold tracking-widest uppercase">Iftar Time</span>
-                            <span className="text-3xl font-bold text-amber-400">{times?.Maghrib || "18:40"}</span>
-                            <span className="text-xs text-slate-600">Maghrib Adhan</span>
+                        <div>
+                            <h2 className="text-lg font-bold text-white">Suhoor &amp; Iftar Timer</h2>
+                            <p className="text-sm text-slate-400">{locationName} · Islamic Society of North America (ISNA)</p>
                         </div>
                     </div>
 
-                    <div className="flex flex-col items-center justify-center py-6">
-                        <span className="text-sm text-slate-400 mb-2">Time until {nextEvent?.type === 'iftar' ? 'Iftar' : 'Suhoor'}</span>
-                        <div className="flex items-center justify-center gap-4 text-3xl font-bold text-amber-500 mb-2">
-                            <span>{nextEvent?.timeLeft?.split(":")[0] || "00"}</span> <span className="text-slate-600 text-lg">HRS</span>
-                            <span>{nextEvent?.timeLeft?.split(":")[1] || "00"}</span> <span className="text-slate-600 text-lg">MIN</span>
-                            <span>{nextEvent?.timeLeft?.split(":")[2] || "00"}</span> <span className="text-slate-600 text-lg">SEC</span>
+                    {/* Main Timer Card */}
+                    <div className="bg-[#1C1C1C] rounded-2xl border border-white/5 overflow-hidden shadow-xl">
+                        {/* Three time columns */}
+                        <div className="grid grid-cols-3 divide-x divide-white/5">
+                            <div className="flex flex-col items-center justify-center py-7 px-4 gap-1">
+                                <span className="text-[10px] text-slate-500 font-bold tracking-widest uppercase mb-1">Stop Eating</span>
+                                <span className="text-3xl font-bold text-emerald-400 tabular-nums">
+                                    {times ? (times.Imsak || times.Fajr) : "05:28"}
+                                </span>
+                                <span className="text-xs text-slate-500 mt-1">Imsak</span>
+                            </div>
+                            <div className="flex flex-col items-center justify-center py-7 px-4 gap-1">
+                                <span className="text-[10px] text-slate-500 font-bold tracking-widest uppercase mb-1">Suhoor Ends</span>
+                                <span className="text-3xl font-bold text-white tabular-nums">
+                                    {times?.Fajr || "05:38"}
+                                </span>
+                                <span className="text-xs text-slate-500 mt-1">Fajr Adhan</span>
+                            </div>
+                            <div className="flex flex-col items-center justify-center py-7 px-4 gap-1 relative bg-amber-500/5 border border-amber-500/30 rounded-tr-2xl">
+                                <div className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                                <span className="text-[10px] text-amber-500/80 font-bold tracking-widest uppercase mb-1">Iftar Time</span>
+                                <span className="text-3xl font-bold text-amber-400 tabular-nums">
+                                    {times?.Maghrib || "18:40"}
+                                </span>
+                                <span className="text-xs text-slate-500 mt-1">Maghrib Adhan</span>
+                            </div>
                         </div>
-                        <span className="text-sm text-slate-400">You are currently {nextEvent?.type === 'iftar' ? 'fasting. Stay patient!' : 'not fasting. Eat well!'}</span>
-                    </div>
 
-                    <div className="flex items-center justify-center gap-2">
-                        <div className="w-5 h-5 rounded-full bg-gradient-to-tr from-slate-800 to-indigo-300" />
-                        <div className="flex flex-col">
-                            <span className="text-sm text-slate-300">Waning Crescent</span>
-                            <span className="text-[10px] text-slate-500">Current lunar phase</span>
+                        {/* Countdown strip */}
+                        <div className="border-t border-white/5 bg-[#161616] flex flex-col items-center justify-center py-7 gap-3">
+                            <span className="text-sm text-amber-500 font-semibold">
+                                Time until {nextEvent?.type === 'iftar' ? 'Iftar' : 'Suhoor'}
+                            </span>
+                            <div className="flex items-end gap-3">
+                                {[
+                                    { val: nextEvent?.timeLeft?.split(":")[0] ?? "00", label: "HRS" },
+                                    { val: nextEvent?.timeLeft?.split(":")[1] ?? "00", label: "MIN" },
+                                    { val: nextEvent?.timeLeft?.split(":")[2] ?? "00", label: "SEC" },
+                                ].map(({ val, label }, i) => (
+                                    <div key={label} className="flex items-end gap-3">
+                                        {i > 0 && <span className="text-slate-600 text-3xl font-bold mb-4"> </span>}
+                                        <div className="flex flex-col items-center">
+                                            <span className="text-5xl font-bold text-amber-500 tabular-nums leading-none tracking-tight">{val}</span>
+                                            <span className="text-[10px] text-slate-500 font-bold tracking-widest mt-2">{label}</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                            <span className="text-sm text-slate-300">
+                                You are currently {nextEvent?.type === 'iftar' ? 'fasting. Stay patient!' : 'not fasting. Eat well!'}
+                            </span>
                         </div>
                     </div>
                 </div>
