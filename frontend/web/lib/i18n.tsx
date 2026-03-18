@@ -22,7 +22,6 @@ export type Translations = {
         settings: string;
         help: string;
         scholars: string;
-        quranPdf: string;
     };
     // Common
     common: {
@@ -157,7 +156,6 @@ const en: Translations = {
         settings: "Settings",
         help: "Help",
         scholars: "Scholars",
-        quranPdf: "Quran PDF",
     },
     common: {
         features: "Features",
@@ -287,7 +285,6 @@ const ur: Translations = {
         settings: "ترتیبات",
         help: "مدد",
         scholars: "علماء",
-        quranPdf: "قرآن پی ڈی ایف",
     },
     common: {
         features: "خصوصیات",
@@ -417,7 +414,6 @@ const hi: Translations = {
         settings: "सेटिंग्स",
         help: "मदद",
         scholars: "इस्लामिक विद्वान",
-        quranPdf: "कुरान PDF",
     },
     common: {
         features: "विशेषताएं",
@@ -547,7 +543,6 @@ const ar: Translations = {
         settings: "الإعدادات",
         help: "المساعدة",
         scholars: "العلماء",
-        quranPdf: "القرآن PDF",
     },
     common: {
         features: "الميزات",

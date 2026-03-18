@@ -50,7 +50,7 @@ export default function SurahPageClient({ surah }: { surah: Surah }) {
 
     return (
         <>
-            <div className="min-h-screen bg-quran-paper dark:bg-zinc-950 pb-32">
+            <div className="min-h-screen bg-zinc-950 pb-32">
                 <SurahInteractive surah={surah} />
                 <ReadingToolbar className="top-[136px]" />
 
@@ -62,20 +62,20 @@ export default function SurahPageClient({ surah }: { surah: Surah }) {
                         />
                     </div>
 
-                    {/* Bismillah - Hide for Surah 1 (part of verses) and Surah 9 (no Bismillah) */}
+                    {/* Bismillah */}
                     {surah.id !== 1 && surah.id !== 9 && (
                         <div className="text-center mb-12">
-                            <h2 className="font-arabic text-4xl leading-relaxed text-slate-800 dark:text-slate-100">
+                            <h2 className="font-arabic text-4xl leading-relaxed text-slate-100">
                                 بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ
                             </h2>
                             <p className="text-slate-500 mt-2 text-sm font-arabic tracking-wide" style={{ fontFamily: 'var(--font-amiri)' }}>شروع اللہ کے نام سے جو بڑا مہربان نہایت رحم والا ہے</p>
-                            <p className="text-slate-400 text-xs uppercase tracking-widest mt-1">In the Name of Allah, the Most Gracious, the Most Merciful</p>
+                            <p className="text-slate-600 text-xs uppercase tracking-widest mt-1">In the Name of Allah, the Most Gracious, the Most Merciful</p>
                         </div>
                     )}
 
                     <div className="animate-fade-in-up">
                         {surah.verses.length === 0 ? (
-                            <div className="text-center py-20 text-slate-500 bg-white/50 dark:bg-zinc-900/50 rounded-3xl border border-dashed border-gray-200 dark:border-zinc-800">
+                            <div className="text-center py-20 text-slate-500 bg-zinc-900/50 rounded-2xl border border-dashed border-zinc-800">
                                 <p className="text-lg">No verses found.</p>
                                 <p className="text-sm opacity-60">We couldn&apos;t retrieve the verses for this Surah.</p>
                             </div>
@@ -111,6 +111,13 @@ export default function SurahPageClient({ surah }: { surah: Surah }) {
                             </div>
                         )}
                     </div>
+
+                    {/* Closing Dua */}
+                    {surah.verses.length > 0 && (
+                        <p className="text-center text-sm text-slate-600 mt-12 italic tracking-wide">
+                            May Allah accept your recitation on this blessed night.
+                        </p>
+                    )}
                 </div>
             </div>
 
