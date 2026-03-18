@@ -130,12 +130,16 @@ export function SurahOverlay({ surahId, juzId, initialVerseId, isOpen, onClose }
                                         dir="rtl"
                                         style={{ fontFamily: 'var(--font-amiri)' }}
                                     >
-                                        {surah?.verses.map((v, i) => (
-                                            <span key={v.id}>
-                                                {v.text}
-                                                <span className="text-emerald-500/70 text-lg mx-1">﴿{i + 1}﴾</span>
-                                            </span>
-                                        ))}
+                                        {surah?.verses.map((v, i) => {
+                                            const arabicText = v.text || v.textIndopak || (v.words && v.words.length > 0 ? v.words.map(w => w.text).join(' ') : "");
+                                            return (
+                                                <span key={v.id}>
+                                                    {arabicText}
+                                                    <span className="text-emerald-500/70 text-lg mx-1 font-sans">﴿{i + 1}﴾</span>
+                                                    {" "}
+                                                </span>
+                                            );
+                                        })}
                                     </p>
                                 </div>
 
