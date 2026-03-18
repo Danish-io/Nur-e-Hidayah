@@ -49,7 +49,6 @@ export function SidebarContent({ onItemClick, isCollapsed = false, onToggle }: {
                 { name: t.nav.ramadan, href: "/ramadan", icon: Moon },
                 { name: t.nav.radio, href: "/radio", icon: Radio },
                 { name: t.nav.hadith, href: "/hadith", icon: BookText },
-                { name: t.nav.quranPdf, href: "/quran-pdf", icon: FileText },
                 { name: "Shab-e-Qadr", href: "/shab-e-qadr", icon: MoonStar },
             ]
         },
