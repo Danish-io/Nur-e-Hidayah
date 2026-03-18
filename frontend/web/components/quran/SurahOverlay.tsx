@@ -58,25 +58,25 @@ export function SurahOverlay({ surahId, juzId, initialVerseId, isOpen, onClose }
                 exit={{ opacity: 0 }}
                 className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8"
             >
-                <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+                <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
                 
                 <motion.div
                     initial={{ scale: 0.9, opacity: 0, y: 20 }}
                     animate={{ scale: 1, opacity: 1, y: 0 }}
                     exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                    className="relative w-full max-w-4xl h-full max-h-[90vh] bg-white dark:bg-zinc-950 rounded-3xl shadow-2xl overflow-hidden flex flex-col border border-slate-200 dark:border-white/10"
+                    className="relative w-full max-w-4xl h-full max-h-[90vh] bg-zinc-950 rounded-3xl shadow-2xl overflow-hidden flex flex-col border border-zinc-800"
                 >
                     {/* Header */}
-                    <div className="flex items-center justify-between p-6 border-b border-slate-100 dark:border-white/5 bg-slate-50/50 dark:bg-zinc-900/50">
+                    <div className="flex items-center justify-between p-6 border-b border-zinc-800 bg-zinc-900/50">
                         <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
+                            <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400">
                                 <BookOpen className="w-6 h-6" />
                             </div>
                             <div>
-                                <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">
+                                <h2 className="text-2xl font-bold text-slate-100">
                                     {loading ? "Loading..." : surah?.transliteration}
                                 </h2>
-                                <p className="text-sm text-slate-500 dark:text-slate-400">
+                                <p className="text-sm text-slate-400">
                                     {loading ? "Please wait" : `${surah?.name} • ${surah?.total_verses} Verses`}
                                 </p>
                             </div>
@@ -85,21 +85,21 @@ export function SurahOverlay({ surahId, juzId, initialVerseId, isOpen, onClose }
                             variant="ghost" 
                             size="icon" 
                             onClick={onClose}
-                            className="rounded-full hover:bg-slate-200 dark:hover:bg-white/10"
+                            className="rounded-full text-slate-400 hover:bg-zinc-800 hover:text-white"
                         >
                             <X className="w-6 h-6" />
                         </Button>
                     </div>
 
                     {/* Content */}
-                    <div className="flex-1 overflow-y-auto p-6 md:p-10 space-y-8 bg-slate-50/30 dark:bg-zinc-950/30">
+                    <div className="flex-1 overflow-y-auto p-6 md:p-10 space-y-4 bg-zinc-950">
                         {loading ? (
                             <div className="flex flex-col items-center justify-center h-64 gap-4">
                                 <Loader2 className="w-10 h-10 text-emerald-500 animate-spin" />
                                 <p className="text-slate-500 animate-pulse">Fetching Holy Verses...</p>
                             </div>
                         ) : (
-                            <div className="max-w-3xl mx-auto space-y-10">
+                            <div className="max-w-3xl mx-auto space-y-4">
                                 {surah?.verses.map((verse) => (
                                     <div key={verse.id} id={`verse-${verse.id}`}>
                                         <VerseCard 
@@ -114,8 +114,8 @@ export function SurahOverlay({ surahId, juzId, initialVerseId, isOpen, onClose }
                     </div>
                     
                     {/* Footer */}
-                    <div className="p-4 border-t border-slate-100 dark:border-white/5 text-center">
-                        <p className="text-xs text-slate-400">
+                    <div className="p-4 border-t border-zinc-800 text-center bg-zinc-900/50">
+                        <p className="text-xs text-slate-500 italic">
                             May Allah accept your recitation on this blessed night.
                         </p>
                     </div>
