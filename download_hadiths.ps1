@@ -1,5 +1,5 @@
 $baseUrl = "https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/editions"
-$destDir = "apps/web/lib/data"
+$destDir = "frontend/web/lib/data"
 $books = @("muslim", "abudawud", "tirmidhi", "nasai", "ibnmajah")
 
 Ensure-Directory -Path $destDir

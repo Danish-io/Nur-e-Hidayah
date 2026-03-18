@@ -4,9 +4,9 @@ An advanced Quran web application featuring translations, tafseer, and AI-powere
 
 ## Structure
 
-- `apps/web`: Next.js 14 Frontend
-- `apps/api`: Node.js Express Backend
-- `apps/ai-service`: Python FastAPI AI Service
+- `frontend/web`: Next.js 14 Frontend
+- `backend/api`: Node.js Express Backend
+- `backend/ai-service`: Python FastAPI AI Service
 - `packages/ui`: Shared UI components
 
 ## Getting Started
